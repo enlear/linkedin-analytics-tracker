@@ -1,31 +1,63 @@
 # LinkedIn Analytics Tracker
 
-**Clear dashboards for your LinkedIn analytics, without the LinkedIn API and without uploading
-your data anywhere.**
+**Clear dashboards for your LinkedIn analytics, without the LinkedIn API.** Use it on your own,
+privately in your browser, or run a free shared tracker for your whole team.
 
 [![CI](https://github.com/enlear/linkedin-analytics-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/enlear/linkedin-analytics-tracker/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**▶ Try it: [enlear.github.io/linkedin-analytics-tracker](https://enlear.github.io/linkedin-analytics-tracker/)**.
+**▶ Try the personal version: [enlear.github.io/linkedin-analytics-tracker](https://enlear.github.io/linkedin-analytics-tracker/)**.
 No sign-up needed; click *Try it with demo data* if you don't have an export yet.
+
+![Dashboard showing impressions over time, best day to post, top posts, follower growth and audience](docs/images/personal-dashboard.png)
+
+<sub>Personal version, with the built-in synthetic demo data.</sub>
+
+---
+
+## Two versions
+
+| | **Personal** | **Team** |
+|---|---|---|
+| **For** | Just you | Your organisation |
+| **You upload** | Your LinkedIn analytics export | Each member uploads the analytics of each post |
+| **You get** | Impressions, engagement, top posts, followers, audience | Leaderboard, monthly winner, team dashboard, printable reports, company page analytics |
+| **Your data lives** | Only in your browser | In your own Supabase project |
+| **Sign-in** | None | Email or Google |
+| **Runs on** | Your computer or GitHub Pages | Supabase + Netlify or Vercel |
+| **Cost** | Free | Free plans, no credit card |
+| **Setup** | 2–5 minutes | 30–45 minutes ([guide](team/docs/setup.md)) |
+| **Code** | [`personal/`](personal) | [`team/`](team) |
+
+```mermaid
+flowchart LR
+    subgraph PER["Personal · everything stays in your browser"]
+        direction LR
+        PX[".xlsx export"] --> PB["Parse, merge<br/>& chart"] --> PDB[("IndexedDB<br/>on your device")]
+    end
+    subgraph TEAM["Team · your own free Supabase project"]
+        direction LR
+        TX[".xlsx per post<br/>from each member"] --> TA["Next.js app<br/>Netlify or Vercel"] --> TDB[("Postgres<br/>row-level security")]
+        TDB --> TD["Leaderboard<br/>& reports"]
+    end
+```
+
+## Why
+
+LinkedIn's post-analytics APIs are only available to approved partners. But LinkedIn already lets
+**every member export their own analytics** as an `.xlsx` file. This project turns those files into
+the dashboards LinkedIn doesn't show you. There's no scraping, no API keys and no browser
+extension.
+
+---
+
+## Personal version
 
 > 🔒 **Your data never leaves your browser.** Your LinkedIn export is read by JavaScript on your
 > own device and stored only in your browser. There is no server, and a Content-Security-Policy
 > stops the page from contacting any other site.
 
-![Dashboard showing impressions over time, best day to post, top posts, follower growth and audience](docs/images/personal-dashboard.png)
-
-<sub>Screenshot uses the built-in synthetic demo data.</sub>
-
----
-
-## Why
-
-LinkedIn's post-analytics APIs are only available to approved partners. But LinkedIn already lets
-**every member export their own analytics** as an `.xlsx` file. This app turns that file into the
-dashboards LinkedIn doesn't show you. There's no scraping, no API keys and no browser extension.
-
-## What you get
+### What you get
 
 - **Impressions & engagements over time**: daily, rolling up to weekly for long ranges
 - **KPIs vs the previous period**: impressions, engagements, engagement rate, new followers, total followers
@@ -37,7 +69,7 @@ dashboards LinkedIn doesn't show you. There's no scraping, no API keys and no br
 - **Your data, your control**: back up everything as JSON, or delete it in one click
 - Light & dark mode, works on phones
 
-## Get your LinkedIn export
+### Get your LinkedIn export
 
 1. Open LinkedIn **on desktop** and go to your profile.
 2. In the **Analytics** section, open **Post impressions** (or **Show all analytics → Content**).
@@ -45,7 +77,7 @@ dashboards LinkedIn doesn't show you. There's no scraping, no API keys and no br
 4. Click **Export**. LinkedIn downloads an `.xlsx` file.
 5. Drop the file onto the app. Repeat every few months to build a longer history.
 
-## How your data stays private
+### How your data stays private
 
 ```mermaid
 flowchart LR
@@ -67,6 +99,60 @@ flowchart LR
 
 ---
 
+## Team version
+
+> 🏢 **Your team's data stays in your own database.** You create a free Supabase project; the app
+> stores everything there, behind row-level security. A new install starts empty, and nobody else
+> can see your data, including the authors of this project.
+
+### What you get
+
+- **Post uploads**: members upload each post's analytics export and tag its type. Files are
+  validated and de-duplicated by post URL.
+- **Live leaderboard and monthly winner**, ranked by a Performance Score that blends median reach,
+  consistency and post type
+- **Admin dashboard**: team totals, activity feed, every member's history
+- **Printable monthly reports** with the winner, rankings and charts
+- **Company page analytics**: LinkedIn and TikTok exports, plus optional Facebook and Instagram
+  insights through Meta's API
+- **Email or Google sign-in.** Admins are set with one line of SQL, so nobody can promote
+  themselves.
+- **Free to run**: Supabase, plus Netlify or Vercel, all on free plans
+
+### Get a post's analytics
+
+Each member does this for every post they want counted. It takes under a minute:
+
+1. Open your LinkedIn post and click **View analytics**.
+2. Click **Export**. LinkedIn downloads an `.xlsx` file for that post.
+3. In the team app, open **Upload post**, pick the post type and drop the file in.
+
+### How team data is protected
+
+```mermaid
+flowchart LR
+    U["Members & admins<br/>browser"] -- "pages &<br/>server actions" --> H["Next.js app<br/>Netlify or Vercel"]
+    U -- "sign in" --> AU
+    subgraph SB["Your Supabase project · free plan"]
+        AU["Auth<br/>email or Google"]
+        DB[("Postgres<br/>row-level security")]
+        ST[("Storage<br/>company files")]
+    end
+    H -- "queries as the<br/>signed-in user" --> DB
+    H -- "company exports<br/>(admins)" --> ST
+```
+
+- **You own the database.** Everything lives in your Supabase project. This repository contains
+  no data and talks to no service of ours.
+- **The database enforces access.** Every query runs as the signed-in person, and row-level
+  security decides what they can do. Members add and delete only their own posts, everyone sees
+  the leaderboard, and company analytics are admin-only.
+- **No master key in the app.** The browser only gets Supabase's publishable key. The app never
+  uses the secret key that bypasses security rules.
+- **Members' files aren't kept.** A post export is read in memory; only its numbers are saved.
+
+---
+
 ## Set it up yourself
 
 You need [Node.js 20+](https://nodejs.org) and Git. Then:
@@ -77,19 +163,22 @@ cd linkedin-analytics-tracker
 npm run setup
 ```
 
-The setup asks two questions:
+The setup asks which version you want, then walks you through it:
 
 ```mermaid
 flowchart TD
     S["npm run setup"] --> V{"Which version?"}
     V -->|Personal| W{"How do you want to use it?"}
-    V -->|Team| T["Coming soon"]
-    W -->|Local app| L["Installs, then runs at localhost:3000"]
+    W -->|Local app| L["Installs, then runs<br/>at localhost:3000"]
     W -->|GitHub Pages| G["Builds, turns on Pages,<br/>tells you what to push"]
     G --> U["Your own public link:<br/>you.github.io/repo"]
+    V -->|Team| T["Connects to your free<br/>Supabase project"]
+    T --> D["Checks the database tables,<br/>writes team/.env.local"]
+    D --> R["Runs at localhost:3000:<br/>sign up, make yourself admin"]
+    R --> H["Deploy on Netlify or Vercel:<br/>your-team.netlify.app"]
 ```
 
-### Option 1: Local app
+### Personal, option 1: local app
 
 Runs on your computer only. Nothing is published.
 
@@ -100,7 +189,7 @@ cd personal && npm install && npm run dev
 
 Open <http://localhost:3000>.
 
-### Option 2: Your own free copy on GitHub Pages
+### Personal, option 2: your own free copy on GitHub Pages
 
 1. **Fork** this repository on GitHub, then clone your fork.
 2. Run `npm run setup -- pages`. It sets your app name, runs the tests, checks the site builds,
@@ -111,9 +200,7 @@ Open <http://localhost:3000>.
 
 Any other static host works too: `npm run build`, then upload the `personal/out/` folder.
 
-### Settings
-
-| Setting | Where | Default |
+| Personal setting | Where | Default |
 |---|---|---|
 | App name | `NEXT_PUBLIC_APP_NAME` in `personal/.env.local` (local) or `personal/.env.production` (Pages) | LinkedIn Analytics Tracker |
 | Description | `NEXT_PUBLIC_APP_DESCRIPTION`, same files | Private LinkedIn analytics… |
@@ -122,9 +209,33 @@ Any other static host works too: `npm run build`, then upload the `personal/out/
 `npm run setup` writes the app name for you. `.env.production` is committed on purpose so the
 GitHub Pages build can read it; only put public settings there.
 
+### Team
+
+**Follow the step-by-step guide: [team/docs/setup.md](team/docs/setup.md).** It covers every
+prerequisite and every click. In short:
+
+| Step | Where | What |
+|---|---|---|
+| 1 | GitHub | Fork this repository |
+| 2 | Supabase | Create a free project and run [the SQL file](team/supabase/migrations/20261028000000_initial_schema.sql) in the SQL Editor |
+| 3 | Supabase | Allow `http://localhost:3000/**` as a redirect URL and choose how sign-up emails are sent |
+| 4 | Your computer | `npm run setup -- team`, then sign up at <http://localhost:3000> |
+| 5 | Supabase | `select public.make_admin('you@example.com');` |
+| 6 | Netlify or Vercel | Import the repo (`team/` folder) with two environment variables |
+| 7 | Supabase | Add your live address to the URL configuration, then invite your team |
+
+| Free service | Used for | Good to know |
+|---|---|---|
+| [Supabase](https://supabase.com) | Database, sign-in, file storage | Free projects pause after a week without activity; the included [keep-alive workflow](.github/workflows/supabase-keepalive.yml) prevents it |
+| [Netlify](https://netlify.com) | Hosting | Free plan allows commercial use |
+| [Vercel](https://vercel.com) | Hosting (alternative) | Hobby plan is for non-commercial use only |
+| [Resend](https://resend.com) or [Brevo](https://brevo.com) | Sign-up emails | Recommended; Supabase's built-in sender only reaches your own Supabase organisation |
+
 ---
 
 ## How it works
+
+### Personal
 
 ```mermaid
 flowchart LR
@@ -152,35 +263,79 @@ locale number formats (`1,234`, `1.234`, `1 234`) and percentages like `5%` or `
 sheets show a warning instead of failing, and a file that isn't a LinkedIn export gets a clear
 message.
 
+### Team
+
+```mermaid
+flowchart LR
+    X[".xlsx for one post"] --> A["parse-export.ts<br/>read in memory"]
+    A --> F["period.ts<br/>file by post date"]
+    F --> DB[("post_uploads<br/>unique post URL")]
+    DB --> S["Performance Score<br/>reach 56% · consistency 24% · post type 20%"]
+    S --> L["Leaderboard ·<br/>monthly winner · report"]
+```
+
+- **Report months** run from the 20th to the 19th (e.g. "May" = 20 Apr – 19 May). The winner is
+  settled at the end of the calendar month, so a period's last posts still gather impressions
+  before the result freezes.
+- **The score** compares each member with that month's participants: median reach per post
+  (one viral post can't dominate), number of posts, and the average weight of their post types.
+  Admins set the weights in Settings.
+- **Duplicates** are blocked by the database: a post URL can only be counted once across the team.
+
+The in-app *Documentation* page explains scoring and periods with a worked example. Technical
+details are in the [team README](team/README.md).
+
 ### Project layout
 
 ```
 .
-├── setup.mjs                  # interactive setup
-├── personal/                  # the app (Next.js, exported as a static site)
-│   ├── src/lib/linkedin/      # export parser, value parsing, demo-data generator
-│   ├── src/lib/dataset.ts     # merges several exports
-│   ├── src/lib/insights.ts    # metrics for the charts (pure functions)
-│   ├── src/components/        # dashboard and import UI
-│   └── test/                  # unit tests with synthetic fixtures only
-└── .github/workflows/         # CI and GitHub Pages deploy
+├── setup.mjs                    # interactive setup for both versions
+├── personal/                    # browser-only app (Next.js, exported as a static site)
+│   ├── src/lib/linkedin/        # export parser, value parsing, demo-data generator
+│   ├── src/lib/dataset.ts       # merges several exports
+│   ├── src/lib/insights.ts      # metrics for the charts (pure functions)
+│   ├── src/components/          # dashboard and import UI
+│   └── test/                    # unit tests with synthetic fixtures only
+├── team/                        # team app (Next.js + Supabase)
+│   ├── supabase/migrations/     # database: tables, row-level security, functions
+│   ├── src/app/                 # pages and server actions
+│   ├── src/lib/                 # parsers, scoring, tracking periods, Supabase clients
+│   ├── docs/setup.md            # step-by-step setup guide
+│   └── test/                    # unit tests and in-process database tests (PGlite)
+├── netlify.toml                 # Netlify build for team/
+└── .github/workflows/           # CI, GitHub Pages deploy, Supabase keep-alive
 ```
 
 ### Development
 
 ```bash
-cd personal
+cd personal                  # or: cd team
 npm install
-npm run dev          # http://localhost:3000
-npm test             # parser, merging, insights
+npm run dev                  # http://localhost:3000 (team needs team/.env.local)
+npm test                     # personal: parser, merging, insights
+                             # team: parsers, scoring, and every database security rule
 npm run lint && npm run typecheck
-npm run build        # static site in personal/out
+npm run build
 ```
+
+The team tests need no Supabase project: the database migrations run in
+[PGlite](https://pglite.dev), an in-process Postgres.
 
 ## FAQ
 
 **Is this allowed by LinkedIn?** It only reads files LinkedIn gives you through its own Export
-button. It doesn't scrape, automate the website or call private APIs.
+button. It doesn't scrape, automate the website or call private APIs. (The team version has an
+optional, experimental sync through LinkedIn's official API, which needs LinkedIn's approval.)
+
+**Which version should I use?** The personal one if it's just you: nothing to set up and nothing
+leaves your browser. The team one if several people should be compared or reported on together.
+
+**Does the team version really cost nothing?** For a typical team, yes. Supabase, Netlify, Resend
+and Brevo all have free plans without a credit card. The [cost table](team/README.md#what-it-costs)
+lists the limits.
+
+**Can the authors see our team's data?** No. Your deployment talks only to your own Supabase
+project. This repository contains no data and no analytics.
 
 **What if LinkedIn changes the export?** Because tables are found by their headers, most layout
 changes don't matter. If something breaks,
@@ -193,9 +348,6 @@ labels are included for a few languages; adding yours is a small PR (see
 
 **Can it show the best time of day to post?** LinkedIn's export has publish dates but not times,
 so it shows the best weekday.
-
-**Is there a version for teams?** A self-hostable team version with shared dashboards and
-leaderboards is in progress.
 
 ## Contributing
 
