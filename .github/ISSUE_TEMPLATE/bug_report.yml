@@ -8,8 +8,13 @@ body:
   - type: dropdown
     id: where
     attributes:
-      label: Where are you running it?
-      options: [The hosted site (enlear.github.io), Locally (npm run dev), My own GitHub Pages copy]
+      label: Which version, and where are you running it?
+      options:
+        - Personal — the hosted site (enlear.github.io)
+        - Personal — my own GitHub Pages copy
+        - Personal — locally (npm run dev)
+        - Team — deployed (Netlify, Vercel or other)
+        - Team — locally (npm run dev)
     validations:
       required: true
   - type: textarea

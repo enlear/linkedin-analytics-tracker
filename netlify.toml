@@ -1,0 +1,10 @@
+# Netlify build for the TEAM version (the app lives in team/). Netlify detects
+# Next.js and adds its runtime automatically. The personal version deploys to
+# GitHub Pages instead (.github/workflows/pages.yml).
+[build]
+  base = "team"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
