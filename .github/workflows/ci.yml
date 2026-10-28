@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  check:
-    name: Lint, typecheck, test, build
+  personal:
+    name: Personal — lint, typecheck, test, build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -25,5 +25,30 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  team:
+    name: Team — lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: team
+    env:
+      # The build never contacts Supabase; placeholders satisfy the config check.
+      NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: team/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      # Includes the database tests: the migrations run in PGlite, an in-process
+      # Postgres, and every row-level security policy is exercised.
       - run: npm test
       - run: npm run build
