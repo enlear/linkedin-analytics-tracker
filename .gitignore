@@ -1,0 +1,24 @@
+# Dependencies & builds
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local settings. (.env.production is NOT ignored: `npm run setup` writes
+# public build settings there for GitHub Pages. Never put secrets in it.)
+.env
+.env.local
+.env.*.local
+
+# Real LinkedIn exports contain personal data and must never be committed.
+# Tests build synthetic workbooks in code instead.
+*.xlsx
+*.xls
+*.csv
+
+# Editors & OS
+.DS_Store
+.vscode/
+.idea/
+*.log

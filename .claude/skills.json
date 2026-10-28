@@ -1,0 +1,8 @@
+{
+  "sources": {
+    "shared-skills": {
+      "url": "https://raw.githubusercontent.com/Tharaka-Chathuranga/claude-skills/main/skills-library"
+    }
+  },
+  "autoDetect": true
+}

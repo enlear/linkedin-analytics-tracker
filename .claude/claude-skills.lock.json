@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "items": {
+    "agent:code-reviewer": {
+      "kind": "agent",
+      "name": "code-reviewer",
+      "source": "shared-skills",
+      "module": "core/workflow",
+      "version": "c7fbd954d19b"
+    },
+    "agent:design-reviewer": {
+      "kind": "agent",
+      "name": "design-reviewer",
+      "source": "shared-skills",
+      "module": "core/design",
+      "version": "c72c6bc96eb1"
+    },
+    "skill:code-quality": {
+      "kind": "skill",
+      "name": "code-quality",
+      "source": "shared-skills",
+      "module": "core/quality",
+      "version": "c97583b32fb7"
+    },
+    "skill:code-review-standards": {
+      "kind": "skill",
+      "name": "code-review-standards",
+      "source": "shared-skills",
+      "module": "core/workflow",
+      "version": "b499df9559d5"
+    },
+    "skill:commit-and-pr": {
+      "kind": "skill",
+      "name": "commit-and-pr",
+      "source": "shared-skills",
+      "module": "core/workflow",
+      "version": "ee0748513fa3"
+    },
+    "skill:dependency-injection": {
+      "kind": "skill",
+      "name": "dependency-injection",
+      "source": "shared-skills",
+      "module": "core/design",
+      "version": "24fc933f1801"
+    },
+    "skill:design-patterns": {
+      "kind": "skill",
+      "name": "design-patterns",
+      "source": "shared-skills",
+      "module": "core/design",
+      "version": "3ba2f7edc45e"
+    },
+    "skill:design-principles": {
+      "kind": "skill",
+      "name": "design-principles",
+      "source": "shared-skills",
+      "module": "core/design",
+      "version": "911772217577"
+    },
+    "skill:react-component": {
+      "kind": "skill",
+      "name": "react-component",
+      "source": "shared-skills",
+      "module": "frontend/react",
+      "version": "54d155206bda"
+    },
+    "skill:react-hook": {
+      "kind": "skill",
+      "name": "react-hook",
+      "source": "shared-skills",
+      "module": "frontend/react",
+      "version": "c59a1049c81d"
+    },
+    "skill:typescript": {
+      "kind": "skill",
+      "name": "typescript",
+      "source": "shared-skills",
+      "module": "languages/typescript",
+      "version": "2997f987fdad"
+    }
+  }
+}

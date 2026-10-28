@@ -1,0 +1,37 @@
+name: My LinkedIn export won't parse
+description: The app rejected your export or shows missing data
+labels: [parser]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! LinkedIn changes its export format and localises labels, so these reports are really useful.
+        ⚠️ **Do not attach the file or paste real numbers, post URLs or names.** Only describe the structure.
+  - type: textarea
+    id: error
+    attributes:
+      label: Error message shown
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: LinkedIn interface language
+      placeholder: e.g. German, Portuguese (Brazil)
+    validations:
+      required: true
+  - type: textarea
+    id: sheets
+    attributes:
+      label: Sheet names and the header row of each sheet
+      placeholder: |
+        DISCOVERY: "Overall Performance", …
+        ENGAGEMENT: "Date", "Impressions", "Engagements"
+        …
+    validations:
+      required: true
+  - type: input
+    id: dates
+    attributes:
+      label: How do dates look? (format only)
+      placeholder: e.g. 31.12.2025 or 12/31/2025
