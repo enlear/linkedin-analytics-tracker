@@ -1,13 +1,16 @@
 {
   "name": "linkedin-analytics-tracker",
   "private": true,
-  "description": "Private LinkedIn analytics from your own export. Your data never leaves your browser.",
+  "description": "LinkedIn analytics from your own exports: a private personal dashboard, and a free self-hosted team tracker.",
   "license": "MIT",
   "engines": { "node": ">=20" },
   "scripts": {
     "setup": "node setup.mjs",
     "dev": "npm --prefix personal run dev",
     "build": "npm --prefix personal run build",
-    "test": "npm --prefix personal test"
+    "test": "npm --prefix personal test",
+    "dev:team": "npm --prefix team run dev",
+    "build:team": "npm --prefix team run build",
+    "test:team": "npm --prefix team test"
   }
 }
